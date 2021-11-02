@@ -17,7 +17,7 @@ class JwtUtilTest {
 
     @BeforeEach
     void init(){
-        String secretKey = "testestestestestestestestsetestestesteststtestse";
+        String secretKey = "testestestestestestestestsetesttestestesteststtestse";
         jwtUtil = new JwtUtil(secretKey);
     }
 
