@@ -30,13 +30,14 @@ public class CustomAuthFilter extends AbstractGatewayFilterFactory<CustomAuthFil
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            // Request Header 에 Authorization 이 존재하지 않을 때
+            // Request Header 에 Authorization 이 존재하는지 확인
             if(!request.getHeaders().containsKey("Authorization")){
                 return handleUnAuthorized(exchange); // 401 Error
             }
-            // Request Header 에서 token 문자열 받아오기
+            //Authorization 헤더 추출 후
             List<String> authHeader = request.getHeaders().get("Authorization");
             String tokenWithBearer = Objects.requireNonNull(authHeader).get(0);
+            //헤더가 Bearer로 시작하는지 확인
             if(!tokenWithBearer.startsWith("Bearer")){
                 return handleUnAuthorized(exchange);
             }

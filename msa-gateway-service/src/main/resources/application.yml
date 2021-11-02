@@ -17,17 +17,17 @@ spring:
         - id: msa-user-servce
           uri: http://localhost:8081
           predicates:
-            - Path=/user/**
+            - Path=/user-service/**
           filters:
             - CustomAuthFilter
-
+            - RewritePath=/user-service/?(?<segment>.*), /$\{segment}
         - id: msa-board-servce
           uri: http://localhost:8083
           predicates:
-            - Path=/board/**
+            - Path=/board-service/**
           filters:
             - CustomAuthFilter
-
+            - RewritePath=/board-service/?(?<segment>.*), /$\{segment}
 eureka:
   client:
     fetch-registry: true
