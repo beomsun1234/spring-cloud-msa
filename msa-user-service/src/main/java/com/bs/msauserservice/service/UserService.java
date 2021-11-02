@@ -21,7 +21,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public String logInUser(LoginDto loginDto){
         User loginUser = userRepository.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword()).orElseThrow();
-        String token = jwtUtil.generateToken(loginUser.getEmail(), loginUser.getRole());
+        String token = jwtUtil.generateToken(loginUser);
         log.info("토큰={}",token);
         return token;
     }
