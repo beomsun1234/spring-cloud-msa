@@ -1,6 +1,7 @@
 package com.bs.msauserservice.util;
 
 import com.bs.msauserservice.domain.Role;
+import com.bs.msauserservice.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,10 +28,10 @@ public class JwtUtil {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String generateToken(String email, Role role){
-        Claims claims = Jwts.claims().setSubject("msa-auth");
-        claims.put("email",email);
-        claims.put("role", role);
+    public String generateToken(User user){
+        Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
+        claims.put("email",user.getEmail());
+        claims.put("role", user.getRole());
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
