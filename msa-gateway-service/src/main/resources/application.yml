@@ -21,6 +21,7 @@ spring:
           filters:
             - CustomAuthFilter
             - RewritePath=/user-service/?(?<segment>.*), /$\{segment}
+
         - id: msa-board-servce
           uri: http://localhost:8083
           predicates:
@@ -28,6 +29,15 @@ spring:
           filters:
             - CustomAuthFilter
             - RewritePath=/board-service/?(?<segment>.*), /$\{segment}
+
+        - id: msa-reply-servce
+          uri: http://localhost:8084
+          predicates:
+            - Path=/reply-service/**
+          filters:
+            - CustomAuthFilter
+            - RewritePath=/reply-service/?(?<segment>.*), /$\{segment}
+            
 eureka:
   client:
     fetch-registry: true
