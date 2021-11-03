@@ -38,6 +38,7 @@ spring:
             - CustomAuthFilter
             - RewritePath=/reply-service/?(?<segment>.*), /$\{segment}
 
+
 eureka:
   client:
     fetch-registry: true
