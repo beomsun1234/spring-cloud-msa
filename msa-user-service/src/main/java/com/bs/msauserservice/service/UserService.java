@@ -11,6 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -18,6 +22,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    /**
+     * 로그인
+     * @param loginDto
+     * @return
+     */
     @Transactional(readOnly = true)
     public String logInUser(LoginDto loginDto){
         User loginUser = userRepository.findByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword()).orElseThrow();
@@ -26,6 +35,25 @@ public class UserService {
         return token;
     }
 
+    /**
+     * 여러 유저 찾기 by Ids
+     * @param ids
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<UserInfo> findAllByIds(List<Long> ids){
+        List<User> users = userRepository.findAllById(ids);
+        if(users.isEmpty()){
+            return new ArrayList<>();
+        }
+        return users.stream().map(user -> UserInfo.builder().user(user).build()).collect(Collectors.toList());
+    }
+
+    /**
+     * 회원가입
+     * @param signUpDto
+     * @return
+     */
     @Transactional
     public Long signUpUser(SignUpDto signUpDto){
         if(userRepository.findByEmail(signUpDto.getEmail()).isPresent()){
@@ -34,6 +62,11 @@ public class UserService {
         return userRepository.save(signUpDto.toEntity()).getId();
     }
 
+    /**
+     * 유저 상세
+     * @param userId
+     * @return
+     */
     @Transactional(readOnly = true)
     public UserInfo getUserInfoById(Long userId){
         User user = userRepository.findById(userId).orElseThrow();
