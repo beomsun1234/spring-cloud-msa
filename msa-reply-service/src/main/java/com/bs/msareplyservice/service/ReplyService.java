@@ -1,9 +1,11 @@
 package com.bs.msareplyservice.service;
 
 
+import com.bs.msareplyservice.client.UserServiceClient;
 import com.bs.msareplyservice.domain.Reply;
 import com.bs.msareplyservice.dto.ReplyCreateDto;
 import com.bs.msareplyservice.dto.ReplyInfo;
+import com.bs.msareplyservice.dto.UserInfo;
 import com.bs.msareplyservice.repository.ReplyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
-
+    private final UserServiceClient userServiceClient;
     @Transactional
     public Long createReply(Long boardId, @RequestBody ReplyCreateDto replyCreateDto){
         return replyRepository.save(replyCreateDto.toEntity(boardId)).getId();
@@ -30,11 +32,24 @@ public class ReplyService {
      * @return
      */
     @Transactional(readOnly = true)
-    public List<ReplyInfo> findRepliesByBoardId(Long bordId){
+    public List<ReplyInfo> findRepliesByBoardId(Long bordId, String token){
         List<Reply> replies = replyRepository.findByBoardId(bordId);
         if (replies.isEmpty()){
             return new ArrayList<>();
         }
-        return replies.stream().map(reply -> ReplyInfo.builder().reply(reply).build()).collect(Collectors.toList());
+        List<ReplyInfo> replyInfos = replies.stream()
+                .map(reply -> ReplyInfo.builder().reply(reply).build())
+                .collect(Collectors.toList());
+        //댓글 작성한 유저 id list로 만들고
+        List<Long> ids = replies.stream().map(Reply::getMemberId).collect(Collectors.toList());
+        //유저서비스 호출
+        List<UserInfo> userInfos = userServiceClient.getUserInfos(token, ids);
+        //댓글 정보에 유저 정보 삽입
+        for (ReplyInfo replyInfo : replyInfos) {
+            userInfos.stream().filter(userInfo -> {
+                return userInfo.getUser_id().equals(replyInfo.getUser_id());
+            }).forEach(replyInfo::setUserInfo);
+        }
+        return replyInfos;
     }
 }
