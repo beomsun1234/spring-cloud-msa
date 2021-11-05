@@ -6,6 +6,7 @@ import com.bs.msareplyservice.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,8 +36,9 @@ public class ReplyController {
      * @return
      */
     @GetMapping("board/{boardId}/reply")
-    public List<ReplyInfo> findRepliesByBoardId(@PathVariable(name = "boardId") Long id){
-        return replyService.findRepliesByBoardId(id);
+    public List<ReplyInfo> findRepliesByBoardId(@PathVariable(name = "boardId") Long id, HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        return replyService.findRepliesByBoardId(id,token);
     }
 
 }

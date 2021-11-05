@@ -1,11 +1,13 @@
 package com.bs.msaboardservice.controller;
 
 import com.bs.msaboardservice.dto.BoardCreateDto;
+import com.bs.msaboardservice.dto.BoardDetailDto;
 import com.bs.msaboardservice.dto.BoardInfo;
 import com.bs.msaboardservice.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -24,8 +26,9 @@ public class BoardController {
      * @return
      */
     @GetMapping("board/{id}")
-    public BoardInfo findOneById(@PathVariable Long id){
-        return boardService.findOneById(id);
+    public BoardDetailDto findOneById(@PathVariable Long id, HttpServletRequest request){
+        String header = request.getHeader("Authorization");
+        return boardService.findOneById(id,header);
     }
     /**
      * 글작성
