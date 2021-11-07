@@ -29,7 +29,8 @@ class ReplyServiceTest {
 
     @InjectMocks
     private ReplyService replyService;
-
+    @Mock
+    private KafkaProducer kafkaProducer;
     @Mock
     private UserServiceClient userServiceClient;
     @Test
@@ -39,6 +40,7 @@ class ReplyServiceTest {
         Long fakeBoardId = 1L;
         ReplyCreateDto replyCreateDto = ReplyCreateDto.builder().author("test").content("test").memberId(1L).build();
         given(replyRepository.save(any())).willReturn(replyCreateDto.toEntity(fakeBoardId));
+        given(kafkaProducer.send(anyString(),any())).willReturn("success");
         //when
         replyService.createReply(fakeBoardId, replyCreateDto);
         //then
