@@ -26,7 +26,7 @@ public class ReplyController {
      * @return
      */
     @PostMapping("board/{boardId}/reply")
-    public Long createReply(@PathVariable(name = "boardId") Long id, @RequestBody ReplyCreateDto replyCreateDto){
+    public ReplyInfo createReply(@PathVariable(name = "boardId") Long id, @RequestBody ReplyCreateDto replyCreateDto){
         return replyService.createReply(id, replyCreateDto);
     }
 

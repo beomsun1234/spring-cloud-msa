@@ -21,9 +21,13 @@ import java.util.stream.Collectors;
 public class ReplyService {
     private final ReplyRepository replyRepository;
     private final UserServiceClient userServiceClient;
+    private final KafkaProducer kafkaProducer;
+
     @Transactional
-    public Long createReply(Long boardId, @RequestBody ReplyCreateDto replyCreateDto){
-        return replyRepository.save(replyCreateDto.toEntity(boardId)).getId();
+    public ReplyInfo createReply(Long boardId, @RequestBody ReplyCreateDto replyCreateDto){
+        ReplyInfo replyInfo = ReplyInfo.builder().reply(replyRepository.save(replyCreateDto.toEntity(boardId))).build();
+        kafkaProducer.send("reply-blog-topic", replyInfo);
+        return replyInfo;
     }
 
     /**
